@@ -1,6 +1,6 @@
 plugins {
     id 'java'
-    id 'org.springframework.boot' version '4.0.5'
+    id 'org.springframework.boot' version '4.0.8'
     id 'io.spring.dependency-management' version '1.1.7'
 }
 
@@ -23,6 +23,15 @@ repositories {
     mavenCentral()
 }
 
+ext {
+    set('opentelemetryVersion', '1.62.0')
+    set('jackson2Version', '2.21.7')
+    set('jackson3Version', '3.1.7')
+    set('tomcat.version', '11.0.26')
+    set('jackson-bom.version', '3.1.7')
+    set('jackson-2-bom.version', '2.21.7')
+}
+
 dependencies {
     // Spring Boot Starters
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
@@ -32,10 +41,14 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
 
     // OpenTelemetry
-    implementation 'io.opentelemetry:opentelemetry-api:1.46.0'
-    implementation 'io.opentelemetry:opentelemetry-sdk:1.46.0'
-    implementation 'io.opentelemetry:opentelemetry-sdk-extension-autoconfigure:1.46.0'
-    implementation 'io.opentelemetry:opentelemetry-exporter-otlp:1.46.0'
+    implementation "io.opentelemetry:opentelemetry-api:${opentelemetryVersion}"
+    implementation "io.opentelemetry:opentelemetry-sdk:${opentelemetryVersion}"
+    implementation "io.opentelemetry:opentelemetry-sdk-extension-autoconfigure:${opentelemetryVersion}"
+    implementation "io.opentelemetry:opentelemetry-exporter-otlp:${opentelemetryVersion}"
+
+    // Jackson BOMs to prevent deserialization vulnerabilities across transitives
+    implementation platform("com.fasterxml.jackson:jackson-bom:${jackson2Version}")
+    implementation platform("tools.jackson:jackson-bom:${jackson3Version}")
 
     // Database & Security
     runtimeOnly 'com.mysql:mysql-connector-j'
@@ -49,7 +62,7 @@ dependencies {
     implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
 
     // Testing
-    testImplementation 'io.opentelemetry:opentelemetry-sdk-testing:1.46.0'
+    testImplementation "io.opentelemetry:opentelemetry-sdk-testing:${opentelemetryVersion}"
     testImplementation 'com.h2database:h2'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
