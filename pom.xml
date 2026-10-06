@@ -94,13 +94,6 @@
 			<version>${opentelemetry-instrumentation.version}</version>
 		</dependency>
 
-		<!-- Micrometer bridge — exports Spring Actuator metrics via OTel -->
-		<dependency>
-			<groupId>io.opentelemetry.instrumentation</groupId>
-			<artifactId>opentelemetry-micrometer-1.5</artifactId>
-			<version>${opentelemetry-instrumentation.version}</version>
-		</dependency>
-
 		<!-- ============================================================ -->
 		<!-- Database                                                       -->
 		<!-- ============================================================ -->
