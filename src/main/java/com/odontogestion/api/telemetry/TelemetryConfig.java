@@ -1,6 +1,7 @@
 package com.odontogestion.api.telemetry;
 
 import io.opentelemetry.api.OpenTelemetry;
+import io.opentelemetry.api.common.AttributeKey;
 import io.opentelemetry.api.common.Attributes;
 import io.opentelemetry.exporter.otlp.http.logs.OtlpHttpLogRecordExporter;
 import io.opentelemetry.exporter.otlp.http.metrics.OtlpHttpMetricExporter;
@@ -14,7 +15,6 @@ import io.opentelemetry.sdk.resources.Resource;
 import io.opentelemetry.sdk.trace.SdkTracerProvider;
 import io.opentelemetry.sdk.trace.export.BatchSpanProcessor;
 import io.opentelemetry.sdk.trace.samplers.Sampler;
-import io.opentelemetry.semconv.resource.attributes.ResourceAttributes;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -28,7 +28,7 @@ import java.time.Duration;
  * <p>Configures and wires up TracerProvider, MeterProvider, and LoggerProvider.
  * When {@code OTEL_EXPORTER_OTLP_ENDPOINT} is set, all signals are exported via
  * OTLP/HTTP to Azure Monitor (or any compatible OTLP backend).
- * When absent, the SDK operates in a no-op / stdout-compatible mode.</p>
+ * When absent, the SDK operates in GlobalOpenTelemetry no-op mode.</p>
  *
  * <p>Pattern: Factory Bean — single, centralized initialization point for all
  * OTel providers (mirrors the Go {@code InitTelemetry} function).</p>
@@ -36,6 +36,17 @@ import java.time.Duration;
 @Slf4j
 @Configuration
 public class TelemetryConfig {
+
+    // OTel semantic convention keys — defined inline to avoid the
+    // opentelemetry-semconv artifact dependency (moved to separate module in 1.26+)
+    private static final AttributeKey<String> SERVICE_NAME =
+            AttributeKey.stringKey("service.name");
+    private static final AttributeKey<String> DEPLOYMENT_ENVIRONMENT =
+            AttributeKey.stringKey("deployment.environment");
+    private static final AttributeKey<String> CLOUD_PROVIDER =
+            AttributeKey.stringKey("cloud.provider");
+    private static final AttributeKey<String> AI_CLOUD_ROLE =
+            AttributeKey.stringKey("ai.cloud.role");
 
     @Value("${otel.service.name:dental-management-backend}")
     private String serviceName;
@@ -53,17 +64,17 @@ public class TelemetryConfig {
      */
     @Bean
     public OpenTelemetry openTelemetry() {
-        final Resource resource = buildResource();
         final boolean hasOtlpEndpoint = otlpEndpoint != null && !otlpEndpoint.isBlank();
 
         if (!hasOtlpEndpoint) {
-            log.warn("[Telemetry] OTEL_EXPORTER_OTLP_ENDPOINT not set — SDK will use GlobalOpenTelemetry (no-op or auto-configured).");
+            log.warn("[Telemetry] OTEL_EXPORTER_OTLP_ENDPOINT not set — using GlobalOpenTelemetry no-op mode.");
             return io.opentelemetry.api.GlobalOpenTelemetry.get();
         }
 
         log.info("[Telemetry] Initializing OTLP exporters → endpoint={}, service={}, env={}",
                 otlpEndpoint, serviceName, environment);
 
+        final Resource resource = buildResource();
         final SdkTracerProvider tracerProvider = buildTracerProvider(resource);
         final SdkMeterProvider meterProvider = buildMeterProvider(resource);
         final SdkLoggerProvider loggerProvider = buildLoggerProvider(resource);
@@ -92,9 +103,10 @@ public class TelemetryConfig {
     private Resource buildResource() {
         return Resource.getDefault().merge(
                 Resource.create(Attributes.builder()
-                        .put(ResourceAttributes.SERVICE_NAME, serviceName)
-                        .put(ResourceAttributes.DEPLOYMENT_ENVIRONMENT, environment)
-                        .put(ResourceAttributes.CLOUD_PROVIDER, "azure")
+                        .put(SERVICE_NAME, serviceName)
+                        .put(DEPLOYMENT_ENVIRONMENT, environment)
+                        .put(CLOUD_PROVIDER, "azure")
+                        .put(AI_CLOUD_ROLE, serviceName)
                         .build()
                 )
         );
