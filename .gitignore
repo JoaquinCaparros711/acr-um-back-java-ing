@@ -29,3 +29,4 @@ logs/
 # Build
 build/
 out/
+.gradle/

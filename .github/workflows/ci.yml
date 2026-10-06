@@ -177,11 +177,6 @@ jobs:
           git tag "${{ steps.meta.outputs.image_tag }}"
           git push origin "${{ steps.meta.outputs.image_tag }}" || echo "Tag already pushed"
 
-      - name: Azure Login
-        uses: azure/login@v2
-        with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
-
       - name: Docker Login to ACR
         uses: azure/docker-login@v2
         with:
@@ -209,10 +204,6 @@ jobs:
             org.opencontainers.image.revision=${{ github.sha }}
             org.opencontainers.image.source=https://github.com/${{ github.repository }}
 
-      - name: Azure Logout
-        if: always()
-        run: az logout || true
-
   # ===========================================================================
   # STAGE 3: Deploy to Azure Container App
   # - Skipped automatically for chore(), doc(), docs() or /notdeploy commits
@@ -235,6 +226,7 @@ jobs:
         uses: azure/login@v2
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
+          allow-no-subscriptions: true
 
       - name: Deploy or Update Container App
         run: |
