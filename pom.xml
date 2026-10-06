@@ -92,11 +92,11 @@
 
 
 		<!-- ============================================================ -->
-		<!-- Database                                                       -->
+		<!-- Database — In-memory H2                                       -->
 		<!-- ============================================================ -->
 		<dependency>
-			<groupId>com.mysql</groupId>
-			<artifactId>mysql-connector-j</artifactId>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
 			<scope>runtime</scope>
 		</dependency>
 
@@ -143,13 +143,6 @@
 			<scope>test</scope>
 		</dependency>
 
-		<!-- In-memory H2 database for test isolation -->
-		<dependency>
-			<groupId>com.h2database</groupId>
-			<artifactId>h2</artifactId>
-			<scope>test</scope>
-		</dependency>
-
 		<!-- ============================================================ -->
 		<!-- Testing                                                        -->
 		<!-- ============================================================ -->
@@ -161,6 +154,7 @@
 	</dependencies>
 
 	<build>
+		<finalName>app</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>

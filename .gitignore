@@ -19,6 +19,7 @@ target/
 .env.local
 application.properties
 application-*.properties
+!src/main/resources/application.properties
 !src/test/resources/application.properties
 !src/main/resources/application.properties.example
 
@@ -29,4 +30,5 @@ logs/
 # Build
 build/
 out/
-.gradle/
+
+boot.sh

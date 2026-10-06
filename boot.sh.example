@@ -1,0 +1,55 @@
+#!/usr/bin/env bash
+# =============================================================================
+# boot.sh.example — Template environment configuration for dental-management-backend
+# Copy to boot.sh: cp boot.sh.example boot.sh
+# =============================================================================
+
+set -e
+
+# --- Application Configuration ---
+export SPRING_APPLICATION_NAME="dental-management-backend"
+export SPRING_PROFILES_ACTIVE="dev"
+
+# --- Database Configuration (H2 In-Memory) ---
+export SPRING_DATASOURCE_URL="jdbc:h2:mem:dentaldb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE"
+export SPRING_DATASOURCE_DRIVER_CLASS_NAME="org.h2.Driver"
+export SPRING_DATASOURCE_USERNAME="sa"
+export SPRING_DATASOURCE_PASSWORD=""
+export SPRING_JPA_DATABASE_PLATFORM="org.hibernate.dialect.H2Dialect"
+export SPRING_JPA_HIBERNATE_DDL_AUTO="update"
+export SPRING_JPA_SHOW_SQL="false"
+export SPRING_JPA_PROPERTIES_HIBERNATE_FORMAT_SQL="true"
+export SPRING_H2_CONSOLE_ENABLED="true"
+export SPRING_H2_CONSOLE_PATH="/h2-console"
+
+# --- Spring Boot Actuator Endpoints ---
+export MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE="health,metrics,info,prometheus"
+export MANAGEMENT_ENDPOINT_HEALTH_SHOW_DETAILS="always"
+export MANAGEMENT_METRICS_EXPORT_PROMETHEUS_ENABLED="true"
+
+# --- OpenTelemetry (Traces, Metrics, Logs) ---
+export OTEL_SERVICE_NAME="dental-management-backend"
+export OTEL_EXPORTER_OTLP_ENDPOINT="${OTEL_EXPORTER_OTLP_ENDPOINT:-}"
+export OTEL_EXPORTER_OTLP_PROTOCOL="http/protobuf"
+export OTEL_LOGS_EXPORTER="otlp"
+export OTEL_METRICS_EXPORTER="otlp"
+export OTEL_TRACES_EXPORTER="otlp"
+
+# --- Security & JWT (Sensitive Credentials - Change for production) ---
+export JWT_SECRET="your-base64-encoded-secret-key-min-256-bits"
+export JWT_EXPIRATION_MS="86400000"
+
+echo "[boot.sh] All environment variables successfully exported."
+
+if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
+    SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+    cd "$SCRIPT_DIR"
+
+    if [[ -f "./target/app.jar" ]]; then
+        echo "[boot.sh] Starting packaged application from target/app.jar..."
+        exec java -jar ./target/app.jar "$@"
+    else
+        echo "[boot.sh] Starting application via Maven wrapper..."
+        exec ./mvnw spring-boot:run "$@"
+    fi
+fi
