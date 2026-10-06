@@ -27,4 +27,4 @@ WORKDIR /app
 COPY --from=builder /java/app/builder/build/libs/azure-app-0.0.1-SNAPSHOT.jar /app/app.jar
 EXPOSE 8080
 
-ENTRYPOINT [ "java", "-Djava.security.egd=file:/dev/./urandom", "-jar", "app.jar", "${JAVA_OPTS}", "{0}", "{@}" ]
+ENTRYPOINT [ "java", "-Djava.security.egd=file:/dev/./urandom", "-jar", "app.jar" ]
