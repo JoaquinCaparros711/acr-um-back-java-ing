@@ -1,0 +1,30 @@
+# Maven
+target/
+.classpath
+.project
+.settings/
+*.jar
+*.war
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Environment & Credentials — NEVER commit these
+.env
+.env.local
+application-dev.properties
+application-local.properties
+application-production.properties
+
+# Logs
+logs/
+*.log
+
+# Build
+build/
+out/
