@@ -17,9 +17,10 @@ target/
 # Environment & Credentials — NEVER commit these
 .env
 .env.local
-application-dev.properties
-application-local.properties
-application-production.properties
+application.properties
+application-*.properties
+!src/test/resources/application.properties
+!src/main/resources/application.properties.example
 
 # Logs
 logs/

@@ -87,12 +87,6 @@
 			<version>${opentelemetry.version}</version>
 		</dependency>
 
-		<!-- Spring Boot auto-instrumentation for OTel (traces HTTP requests) -->
-		<dependency>
-			<groupId>io.opentelemetry.instrumentation</groupId>
-			<artifactId>opentelemetry-spring-boot-starter</artifactId>
-			<version>${opentelemetry-instrumentation.version}</version>
-		</dependency>
 
 		<!-- ============================================================ -->
 		<!-- Database                                                       -->
@@ -143,6 +137,13 @@
 			<groupId>io.opentelemetry</groupId>
 			<artifactId>opentelemetry-sdk-testing</artifactId>
 			<version>${opentelemetry.version}</version>
+			<scope>test</scope>
+		</dependency>
+
+		<!-- In-memory H2 database for test isolation -->
+		<dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
 			<scope>test</scope>
 		</dependency>
 

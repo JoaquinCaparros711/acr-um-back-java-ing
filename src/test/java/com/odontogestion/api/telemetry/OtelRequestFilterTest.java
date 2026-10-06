@@ -34,6 +34,7 @@ class OtelRequestFilterTest {
 
     @BeforeEach
     void setUp() {
+        GlobalOpenTelemetry.resetForTest();
         // Arrange: set up an in-memory OTel SDK for span capture
         spanExporter = InMemorySpanExporter.create();
         final SdkTracerProvider tracerProvider = SdkTracerProvider.builder()
