@@ -20,7 +20,7 @@ In traditional dental clinics, clinical and administrative information is often 
    - Stateless authentication powered by JSON Web Tokens (JWT) and Spring Security.
    - Passwords securely hashed with `BCryptPasswordEncoder`.
    - Token-based stateless session management.
-
+ 
 2. **Per-Dentist Data Isolation (User-Level Multi-Tenancy):**
    - Each authenticated dentist accesses and manages only their own registered patients, appointments, and clinical records.
    - User identity context is automatically extracted from validated JWT claims on every request.
