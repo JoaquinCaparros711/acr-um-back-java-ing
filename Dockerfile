@@ -26,5 +26,5 @@ WORKDIR /app
 COPY --from=builder /java/app/builder/target/app.jar /app/app.jar
 EXPOSE 8080
 
-ENTRYPOINT [ "java", "-Djava.security.egd=file:/dev/./urandom", "-jar", "/app/app.jar", "${JAVA_OPTS}", "{0}", "{@}" ]
+ENTRYPOINT [ "java", "-Djava.security.egd=file:/dev/./urandom", "-jar", "/app/app.jar" ]
 

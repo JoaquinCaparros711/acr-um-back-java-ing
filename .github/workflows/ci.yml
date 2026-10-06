@@ -262,20 +262,21 @@ jobs:
 
           if [ -n "$APP_INSIGHTS_CS" ]; then
             ENV_VARS+=(APPLICATIONINSIGHTS_CONNECTION_STRING=secretref:appinsights)
-            ENV_VARS+=(OTEL_EXPORTER_OTLP_ENDPOINT=secretref:appinsights)
           fi
 
           # Check if the Container App already exists
           if az containerapp show --name "$REPO_NAME-app" --resource-group "${{ secrets.AZURE_RESOURCE_GROUP }}" > /dev/null 2>&1; then
+            echo "Waiting for any active Azure provisioning operations to complete..."
+            for i in {1..18}; do
+              PROV_STATE=$(az containerapp show --name "$REPO_NAME-app" --resource-group "${{ secrets.AZURE_RESOURCE_GROUP }}" --query "properties.provisioningState" -o tsv 2>/dev/null || echo "Succeeded")
+              if [ "$PROV_STATE" = "Succeeded" ] || [ "$PROV_STATE" = "Failed" ] || [ -z "$PROV_STATE" ]; then
+                break
+              fi
+              echo "Provisioning state is '$PROV_STATE'. Waiting 10s..."
+              sleep 10
+            done
+
             echo "Updating existing Container App..."
-
-            if [ -n "$APP_INSIGHTS_CS" ]; then
-              az containerapp secret set \
-                --name "$REPO_NAME-app" \
-                --resource-group "${{ secrets.AZURE_RESOURCE_GROUP }}" \
-                --secrets "appinsights=$APP_INSIGHTS_CS"
-            fi
-
             az containerapp update \
               --name "$REPO_NAME-app" \
               --resource-group "${{ secrets.AZURE_RESOURCE_GROUP }}" \

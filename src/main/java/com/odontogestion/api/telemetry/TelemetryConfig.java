@@ -64,10 +64,12 @@ public class TelemetryConfig {
      */
     @Bean
     public OpenTelemetry openTelemetry() {
-        final boolean hasOtlpEndpoint = otlpEndpoint != null && !otlpEndpoint.isBlank();
+        final boolean hasOtlpEndpoint = otlpEndpoint != null
+                && !otlpEndpoint.isBlank()
+                && (otlpEndpoint.startsWith("http://") || otlpEndpoint.startsWith("https://"));
 
         if (!hasOtlpEndpoint) {
-            log.warn("[Telemetry] OTEL_EXPORTER_OTLP_ENDPOINT not set — using GlobalOpenTelemetry no-op mode.");
+            log.warn("[Telemetry] OTEL_EXPORTER_OTLP_ENDPOINT is empty or not a valid HTTP URL ('{}') — using GlobalOpenTelemetry no-op mode.", otlpEndpoint);
             return io.opentelemetry.api.GlobalOpenTelemetry.get();
         }
 
