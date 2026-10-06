@@ -137,6 +137,15 @@
 			<artifactId>jackson-datatype-jsr310</artifactId>
 		</dependency>
 
+
+		<!-- OTel testing utilities — InMemorySpanExporter for unit tests -->
+		<dependency>
+			<groupId>io.opentelemetry</groupId>
+			<artifactId>opentelemetry-sdk-testing</artifactId>
+			<version>${opentelemetry.version}</version>
+			<scope>test</scope>
+		</dependency>
+
 		<!-- ============================================================ -->
 		<!-- Testing                                                        -->
 		<!-- ============================================================ -->
