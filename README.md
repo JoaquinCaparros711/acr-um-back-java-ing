@@ -12,7 +12,7 @@ In traditional dental clinics, clinical and administrative information is often 
 * **Lack of traceability:** Inability to quickly track and review a patient's historical medical evolutions.
 * **Risk of data loss:** Vulnerability of paper records to physical damage, loss, or deterioration.
 
----
+--- 
 
 ## 🚀 Key Features & Architecture
 
