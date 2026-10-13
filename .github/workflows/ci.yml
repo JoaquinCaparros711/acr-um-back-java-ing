@@ -258,6 +258,7 @@ jobs:
             OTEL_SERVICE_NAME="$REPO_NAME"
             ENVIRONMENT=production
             SPRING_PROFILES_ACTIVE=production
+            OTEL_EXPORTER_OTLP_ENDPOINT="disabled"
           )
 
           if [ -n "$APP_INSIGHTS_CS" ]; then
